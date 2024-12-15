@@ -15,10 +15,6 @@ from datetime import datetime
 # Initialize FastAPI app
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, Render!"}
-
 if __name__ == "__main__":
     # Use the PORT environment variable provided by Render
     port = int(os.getenv("PORT", 8000))
