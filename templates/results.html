@@ -6,18 +6,13 @@
     <link href="/static/style.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Financial Analysis App</a>
-        </div>
-    </nav>
-
     <div class="container mt-5">
-        <div class="text-center gradient-header py-3 mb-4">
-            <h1 class="display-5 text-light">Financial Analysis Results</h1>
+        <div class="text-center">
+            <h1 class="display-5">Financial Analysis Results</h1>
         </div>
 
-        <div class="card shadow-lg p-4">
+        <!-- Summary Section -->
+        <div class="card shadow-sm p-4 mt-4">
             <h4>Summary</h4>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item"><strong>Name:</strong> {{ name }}</li>
@@ -28,6 +23,7 @@
             </ul>
         </div>
 
+        <!-- Investment Allocation Table -->
         <div class="mt-5">
             <h4>Investment Allocation Breakdown</h4>
             <table class="table table-bordered">
@@ -54,6 +50,7 @@
             </table>
         </div>
 
+        <!-- Investment Visualizations -->
         <div class="mt-5">
             <h4>Investment Allocation Charts</h4>
             <div class="row">
@@ -66,6 +63,7 @@
             </div>
         </div>
 
+        <!-- Stock Prediction Chart -->
         <div class="mt-5">
             <h4>{{ ticker }} Stock Prediction Chart</h4>
             {% if prediction_chart %}
@@ -75,9 +73,10 @@
             {% endif %}
         </div>
 
+        <!-- Navigation Links -->
         <div class="text-center mt-4">
             <a href="/" class="btn btn-secondary">Enter New Data</a>
-            <a href="/leaderboard" class="btn btn-primary ms-3">View Leaderboard</a>
+            <a href="/leaderboard" class="btn btn-primary ms-3" style="color: black;">View Leaderboard</a>
         </div>
     </div>
 </body>
