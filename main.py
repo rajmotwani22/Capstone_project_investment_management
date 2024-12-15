@@ -196,3 +196,14 @@ async def leaderboard(request: Request):
         )
     except Exception as e:
         return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
+
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    
+    # Use the correct PORT environment variable
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
+
