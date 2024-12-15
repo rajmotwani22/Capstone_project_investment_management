@@ -2,8 +2,7 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import sqlite3
 import os
 import pandas as pd
@@ -14,32 +13,7 @@ import yfinance as yf
 from datetime import datetime
 
 # Initialize FastAPI app
-=======
-=======
-import sqlite3
->>>>>>> 17cd9b0 (Updated code with new features)
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-import yfinance as yf
-from datetime import datetime
 
-<<<<<<< HEAD
-# Initialize the app
->>>>>>> 3040dec (Initial commit for financial analysis web app)
-=======
-# Initialize FastAPI app
->>>>>>> 17cd9b0 (Updated code with new features)
-app = FastAPI()
-
-# Directories
-CHARTS_FOLDER = "static/saved_charts"
-os.makedirs(CHARTS_FOLDER, exist_ok=True)
-
-<<<<<<< HEAD
-<<<<<<< HEAD
 # Jinja2 Templates
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -70,11 +44,11 @@ initialize_database()
 
 # Visualization for Investment Allocation
 def visualize_investment_allocation(investment_amount, filename):
-=======
+ 
 # Jinja2 templates
-=======
+ 
 # Jinja2 Templates
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -105,22 +79,22 @@ initialize_database()
 
 # Investment Allocation Visualization
 def visualize_investment_allocation(investment_amount, filename):
-<<<<<<< HEAD
+ 
     """
     Creates and saves visualizations for investment allocation.
     """
     # Sample data for top companies
->>>>>>> 3040dec (Initial commit for financial analysis web app)
-=======
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
+ 
+ 
     data = {
         'Company': ['Apple', 'Amazon', 'Microsoft', 'Google', 'Tesla'],
         'Expected Return (%)': [12, 15, 10, 11, 20],
         'Risk (Volatility %)': [18, 22, 15, 17, 30]
     }
     df = pd.DataFrame(data)
-<<<<<<< HEAD
-<<<<<<< HEAD
+ 
+ 
     df['Weight'] = df['Expected Return (%)'] / df['Expected Return (%)'].sum()
     df['Investment ($)'] = df['Weight'] * investment_amount
     df['Post-Investment Amount ($)'] = df['Investment ($)'] * (1 + df['Expected Return (%)'] / 100)
@@ -129,11 +103,11 @@ def visualize_investment_allocation(investment_amount, filename):
     pie_path = os.path.join(CHARTS_FOLDER, f"{filename}_allocation_pie.png")
     plt.figure(figsize=(8, 6))
     plt.pie(df['Investment ($)'], labels=df['Company'], autopct='%1.1f%%', startangle=140)
-=======
+ 
 
     # Calculate proportional allocation
-=======
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
+ 
     df['Weight'] = df['Expected Return (%)'] / df['Expected Return (%)'].sum()
     df['Investment ($)'] = df['Weight'] * investment_amount
     df['Post-Investment Amount ($)'] = df['Investment ($)'] * (1 + df['Expected Return (%)'] / 100)
@@ -142,18 +116,18 @@ def visualize_investment_allocation(investment_amount, filename):
 
     pie_path = os.path.join(CHARTS_FOLDER, f"{filename}_allocation_pie.png")
     plt.figure(figsize=(8, 6))
-<<<<<<< HEAD
+ 
     plt.pie(df['Investment ($)'], labels=df['Company'], autopct=lambda p: f'${p * investment_amount / 100:,.2f}', startangle=140)
->>>>>>> 3040dec (Initial commit for financial analysis web app)
-=======
+ 
+ 
     plt.pie(df['Investment ($)'], labels=df['Company'], autopct='%1.1f%%', startangle=140)
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
     plt.title('Investment Allocation by Company')
     plt.savefig(pie_path)
     plt.close()
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+ 
+ 
     # Line Chart: Cumulative Investment
     line_path = os.path.join(CHARTS_FOLDER, f"{filename}_allocation_line.png")
     df['Cumulative Investment ($)'] = df['Investment ($)'].cumsum()
@@ -241,7 +215,7 @@ def visualize_predictions(data, ticker, filename):
     plt.savefig(prediction_path)
     plt.close()
     return prediction_path
-=======
+ 
     # Create Bar Chart for Expected Returns and Investment Amount
     bar_path = os.path.join(CHARTS_FOLDER, f"{filename}_bar.png")
     plt.figure(figsize=(10, 6))
@@ -257,9 +231,9 @@ def visualize_predictions(data, ticker, filename):
     # Create Line Chart for Cumulative Investment
     cumulative_path = os.path.join(CHARTS_FOLDER, f"{filename}_line.png")
     plt.figure(figsize=(10, 6))
-=======
+ 
     line_path = os.path.join(CHARTS_FOLDER, f"{filename}_allocation_line.png")
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
     df['Cumulative Investment ($)'] = df['Investment ($)'].cumsum()
     plt.figure(figsize=(10, 6))
     plt.plot(df['Company'], df['Cumulative Investment ($)'], marker='o', color='green')
@@ -277,12 +251,11 @@ def train_model(data):
     data['Daily Return'] = data['Close'].pct_change()
     data.dropna(inplace=True)
 
-<<<<<<< HEAD
->>>>>>> 3040dec (Initial commit for financial analysis web app)
-=======
+ 
+ 
     if data.empty:
         raise ValueError("Not enough data to train the model.")
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
 
     X = data[['Moving Average', 'Volatility', 'Daily Return']]
     y = data['Close']
@@ -318,7 +291,7 @@ def visualize_predictions(data, ticker, filename):
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-<<<<<<< HEAD
+ 
 
 @app.post("/calculate", response_class=HTMLResponse)
 async def calculate(
@@ -353,7 +326,7 @@ async def calculate(
         model = train_model(stock_data)
         predicted_data = predict_stock_prices(model, stock_data)
         prediction_chart = visualize_predictions(predicted_data, ticker, f"prediction_{ticker}")
-=======
+ 
 @app.post("/calculate", response_class=HTMLResponse)
 async def calculate(
     request: Request,
@@ -371,7 +344,7 @@ async def calculate(
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         filename = f"user_{timestamp.replace(':', '_').replace(' ', '_')}"
 
-<<<<<<< HEAD
+ 
         # Generate visualizations if there are savings
         if savings > 0:
             timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -379,8 +352,8 @@ async def calculate(
             investment_table = df[['Company', 'Investment ($)', 'Expected Return (%)', 'Risk (Volatility %)']].to_dict('records')
         else:
             pie_path, bar_path, line_path, investment_table = None, None, None, []
->>>>>>> 3040dec (Initial commit for financial analysis web app)
-=======
+ 
+ 
         with sqlite3.connect(DATABASE) as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -398,14 +371,14 @@ async def calculate(
 
         cursor.execute("UPDATE user_data SET post_investment = ? WHERE timestamp = ?", (total_post_investment, timestamp))
         conn.commit()
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
 
         return templates.TemplateResponse(
             "results.html",
             {
                 "request": request,
-<<<<<<< HEAD
-<<<<<<< HEAD
+ 
+ 
                 "name": name,
                 "total_expenses": total_expenses,
                 "earnings": earnings,
@@ -422,10 +395,10 @@ async def calculate(
         )
     except Exception as e:
         return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
-=======
-=======
+ 
+ 
                 "name": name,
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
                 "total_expenses": total_expenses,
                 "earnings": earnings,
                 "savings": savings,
@@ -457,9 +430,8 @@ async def leaderboard(request: Request):
             "leaderboard.html",
             {"request": request, "leaderboard_data": leaderboard_data, "enumerate": enumerate},
         )
-<<<<<<< HEAD
->>>>>>> 3040dec (Initial commit for financial analysis web app)
-=======
+ 
+ 
     except Exception as e:
         return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
->>>>>>> 17cd9b0 (Updated code with new features)
+ 
