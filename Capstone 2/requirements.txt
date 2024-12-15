@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-pandas
-matplotlib
-scikit-learn
-yfinance
-sqlite3
