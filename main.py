@@ -15,6 +15,14 @@ from datetime import datetime
 # Initialize FastAPI app
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "Hello, Render!"}
+
+if __name__ == "__main__":
+    # Use the PORT environment variable provided by Render
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
 # Jinja2 Templates
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
