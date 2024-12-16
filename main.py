@@ -47,6 +47,58 @@ def initialize_database():
 
 initialize_database()
 
+
+@app.get("/leaderboard", response_class=HTMLResponse)
+async def leaderboard(request: Request):
+    try:
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT name, savings, post_investment, timestamp
+                FROM user_data
+                ORDER BY post_investment DESC
+            """)
+            leaderboard_data = cursor.fetchall()
+
+        return templates.TemplateResponse(
+            "leaderboard.html",
+            {
+                "request": request,
+                "leaderboard_data": leaderboard_data,
+                "enumerate": enumerate
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            "index.html", {"request": request, "error": str(e)}
+        )
+
+
+# Visualization Functions
+def visualize_expense_breakdown(expenses, filename):
+    labels = ['Rent', 'Utilities', 'Groceries', 'Other Expenses']
+    pie_path = os.path.join(CHARTS_FOLDER, f"{filename}_expenses_pie.png")
+    plt.figure(figsize=(8, 6))
+    plt.pie(expenses, labels=labels, autopct='%1.1f%%', startangle=140)
+    plt.title('Monthly Expense Breakdown')
+    plt.savefig(pie_path)
+    plt.close()
+    return pie_path
+
+def visualize_savings_growth(savings, filename):
+    savings_growth_path = os.path.join(CHARTS_FOLDER, f"{filename}_savings_growth.png")
+    months = [f'Month {i+1}' for i in range(12)]
+    savings_over_time = [savings * (1 + 0.02) ** i for i in range(12)]
+    plt.figure(figsize=(10, 6))
+    plt.plot(months, savings_over_time, marker='o', color='green')
+    plt.title('Savings Growth Over Time')
+    plt.xlabel('Months')
+    plt.ylabel('Savings ($)')
+    plt.grid(True)
+    plt.savefig(savings_growth_path)
+    plt.close()
+    return savings_growth_path
+
 # Investment Allocation Visualization
 def visualize_investment_allocation(investment_amount, filename):
     data = {
@@ -58,8 +110,6 @@ def visualize_investment_allocation(investment_amount, filename):
     df['Weight'] = df['Expected Return (%)'] / df['Expected Return (%)'].sum()
     df['Investment ($)'] = df['Weight'] * investment_amount
     df['Post-Investment Amount ($)'] = df['Investment ($)'] * (1 + df['Expected Return (%)'] / 100)
-
-    total_post_investment = df['Post-Investment Amount ($)'].sum()
 
     pie_path = os.path.join(CHARTS_FOLDER, f"{filename}_allocation_pie.png")
     plt.figure(figsize=(8, 6))
@@ -77,9 +127,9 @@ def visualize_investment_allocation(investment_amount, filename):
     plt.savefig(line_path)
     plt.close()
 
-    return pie_path, line_path, df, total_post_investment
+    return pie_path, line_path, df
 
-# Stock Prediction
+# Stock Prediction Functions
 def train_model(data):
     data['Moving Average'] = data['Close'].rolling(window=10).mean()
     data['Volatility'] = data['Close'].rolling(window=10).std()
@@ -137,8 +187,8 @@ async def calculate(
     try:
         total_expenses = (rent + utilities + groceries + other_expenses) * 12
         savings = earnings - total_expenses
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        filename = f"user_{timestamp.replace(':', '_').replace(' ', '_')}"
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"user_{timestamp}"
 
         with sqlite3.connect(DATABASE) as conn:
             cursor = conn.cursor()
@@ -148,15 +198,14 @@ async def calculate(
             """, (name, rent, utilities, groceries, other_expenses, earnings, total_expenses, savings, 0, timestamp))
             conn.commit()
 
-        pie_allocation_path, line_allocation_path, investment_df, total_post_investment = visualize_investment_allocation(savings, filename)
-
+        pie_allocation_path, line_allocation_path, investment_df = visualize_investment_allocation(savings, filename)
         stock_data = yf.Ticker(ticker).history(period="1y")
         model = train_model(stock_data)
         predicted_data = predict_stock_prices(model, stock_data)
-        prediction_chart = visualize_predictions(predicted_data, ticker, f"prediction_{ticker}")
+        prediction_chart = visualize_predictions(predicted_data, ticker, filename)
+        expense_pie_chart = visualize_expense_breakdown([rent, utilities, groceries, other_expenses], filename)
+        savings_growth_chart = visualize_savings_growth(savings, filename)
 
-        cursor.execute("UPDATE user_data SET post_investment = ? WHERE timestamp = ?", (total_post_investment, timestamp))
-        conn.commit()
 
         return templates.TemplateResponse(
             "results.html",
@@ -166,44 +215,21 @@ async def calculate(
                 "total_expenses": total_expenses,
                 "earnings": earnings,
                 "savings": savings,
-                "post_investment": total_post_investment,
+                "post_investment": savings,
+                "investment_table": investment_df.to_dict('records'),
                 "pie_allocation_path": pie_allocation_path,
                 "line_allocation_path": line_allocation_path,
-                "investment_table": investment_df.to_dict('records'),
                 "prediction_chart": prediction_chart,
                 "ticker": ticker,
+                "expense_pie_chart": expense_pie_chart,
+                "savings_growth_chart": savings_growth_chart,
+
             },
         )
     except Exception as e:
-        print(f"Error: {e}")
         return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
-
-@app.get("/leaderboard", response_class=HTMLResponse)
-async def leaderboard(request: Request):
-    try:
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT name, savings, post_investment, timestamp
-                FROM user_data
-                ORDER BY post_investment DESC
-            """)
-            leaderboard_data = cursor.fetchall()
-
-        return templates.TemplateResponse(
-            "leaderboard.html",
-            {"request": request, "leaderboard_data": leaderboard_data, "enumerate": enumerate},
-        )
-    except Exception as e:
-        return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
-
 
 if __name__ == "__main__":
     import uvicorn
-    import os
-    
-    # Use the correct PORT environment variable
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
-
-
