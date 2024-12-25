@@ -19,7 +19,12 @@
                 <li class="list-group-item"><strong>Total Expenses:</strong> ${{ '{:,.2f}'.format(total_expenses) }}</li>
                 <li class="list-group-item"><strong>Total Earnings:</strong> ${{ '{:,.2f}'.format(earnings) }}</li>
                 <li class="list-group-item"><strong>Savings:</strong> ${{ '{:,.2f}'.format(savings) }}</li>
-                <li class="list-group-item"><strong>Total Post-Investment Amount:</strong> ${{ '{:,.2f}'.format(post_investment) }}</li>
+                <li class="list-group-item"><strong>Investment Type:</strong> {{ investment_type }}</li>
+                <li class="list-group-item highlight">
+                    <strong><span class="icon">💰</span> Total Post-Investment Amount:</strong>
+                    ${{ '{:,.2f}'.format(post_investment) }}
+                </li>
+                
             </ul>
         </div>
 
@@ -52,47 +57,58 @@
 
         <!-- Expense Breakdown Chart -->
         <div class="mt-5">
-            <h4>Monthly Expense Breakdown</h4>
+            <div class="text-center"><h4>Monthly Expense Breakdown</h4></div>
+            
             <div class="text-center">
                 <img src="{{ expense_pie_chart }}" class="img-fluid rounded shadow-sm" alt="Expense Breakdown Chart">
             </div>
         </div>
 
-        <!-- Savings Growth Chart -->
-        <div class="mt-5">
-            <h4>Savings Growth Over Time</h4>
-            <div class="text-center">
-                <img src="{{ savings_growth_chart }}" class="img-fluid rounded shadow-sm" alt="Savings Growth Chart">
-            </div>
-        </div>
-
         <!-- Investment Visualizations -->
         <div class="mt-5">
+            <div class="text-center">
             <h4>Investment Allocation Charts</h4>
-            <div class="row">
-                <div class="col-md-6">
+        </div>
+            <div class="text-center">
+                
                     <img src="{{ pie_allocation_path }}" class="img-fluid rounded shadow-sm" alt="Investment Pie Chart">
-                </div>
-                <div class="col-md-6">
-                    <img src="{{ line_allocation_path }}" class="img-fluid rounded shadow-sm" alt="Cumulative Investment Chart">
-                </div>
+                
+            </div>
+        </div>
+        <!-- Investment Summary Section -->
+<div class="mt-5">
+    <div class="text-center">
+    <h4>Investment Results</h4>
+    <p><strong>Total Expenses:</strong> ${{ total_expenses }}</p>
+    <p><strong>Earnings:</strong> ${{ earnings }}</p>
+    <p><strong>Savings Before Investment:</strong> ${{ savings }}</p>
+    </div>
+    <!-- Bar Chart for Investment Comparison -->
+    <div class="mt-4">
+        <div class="text-center">
+        <h5>Investment Comparison</h5>
+        <img src="{{ investment_bar_chart }}" class="img-fluid rounded shadow-sm" alt="Investment Bar Chart">
+    </div>
+    </div>
+</div>
+
+        <!-- Stock Prediction Results Section -->
+        <div class="mt-5">
+            <div class="text-center">
+            <h4>{{ ticker }} Stock Prediction Results</h4>
+            <p><strong>Current Stock Price:</strong> ${{ current_price }}</p>
+            <p><strong>Predicted Future Stock Price:</strong> ${{ future_price }}</p>
+            <img src="{{ prediction_chart }}" class="img-fluid rounded shadow-sm" alt="Stock Prediction Chart">
             </div>
         </div>
 
-        <!-- Stock Prediction Chart -->
-        <div class="mt-5">
-            <h4>{{ ticker }} Stock Prediction Chart</h4>
-            {% if prediction_chart %}
-                <img src="{{ prediction_chart }}" class="img-fluid rounded shadow-sm" alt="Prediction Chart">
-            {% else %}
-                <p class="text-warning">Stock prediction chart could not be generated due to insufficient data.</p>
-            {% endif %}
-        </div>
 
         <!-- Navigation Links -->
         <div class="text-center mt-4">
+            <div class="text-center">
             <a href="/" class="btn btn-secondary">Enter New Data</a>
             <a href="/leaderboard" class="btn btn-primary ms-3" style="color: black;">View Leaderboard</a>
+            </div>
         </div>
     </div>
 </body>

@@ -55,7 +55,12 @@
                     <label for="earnings" class="form-label">Annual Earnings</label>
                     <input type="number" name="earnings" id="earnings" class="form-control" required>
                 </div>
-
+                <label for="investment_type" class="form-label">Investment Type</label>
+                <select name="investment_type" id="investment_type" class="form-select" required>
+                    <option value="large">Large Cap</option>
+                    <option value="mid">Mid Cap</option>
+                    <option value="small">Small Cap</option>
+                </select>
                 <!-- Stock Selection -->
                 <div class="mt-4">
                     <label for="ticker" class="form-label">Select a Stock for Prediction</label>
